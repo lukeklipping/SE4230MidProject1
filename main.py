@@ -47,7 +47,7 @@ def print_bill(consultation_fee, insurance_discount, tax, facility_fee, final_bi
     print("Facility Fee: $", facility_fee)
     print("Final Bill: $", final_bill)
 
-def process_billing(appointment):
+def process_billing(doctor_type, patient_insurance):
     consultation_fee = calculate_consultation_fee(doctor_type)
     insurance_discount = calculate_insurance_discount(consultation_fee, patient_insurance)
     amount_after_discount = consultation_fee - insurance_discount
@@ -72,7 +72,7 @@ def process_appointment(appointment):
     
     patient_name, patient_phone, patient_insurance, doctor_type = extract_patient(appointment)
 
-    consultation_fee, insurance_discount, amount_after_discount, tax, facility_fee, final_bill = process_billing(appointment)
+    consultation_fee, insurance_discount, amount_after_discount, tax, facility_fee, final_bill = process_billing(doctor_type, patient_insurance)
 
     display_appointment(patient_name, patient_phone, patient_insurance, consultation_fee, insurance_discount, tax, facility_fee, final_bill)
 
