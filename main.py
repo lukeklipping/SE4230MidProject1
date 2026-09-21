@@ -7,15 +7,18 @@ def calculate_consultation_fee(doctor_type):
         return 75
 
 def calculate_insurance_discount(fee, insurance):
+    premium_rate = 0.3
+    standard_rate = 0.15
     if insurance == "premium":
-        return fee * 0.30
+        return fee * premium_rate
     elif insurance == "standard":
-        return fee * 0.15
+        return fee * standard_rate
     else:
         return 0
 
 def calculate_tax(amount):
-    return amount * 0.06
+    tax_rate = 0.6
+    return amount * tax_rate
 
 def calculate_facility_fee(amount):
     if amount >= 100:
