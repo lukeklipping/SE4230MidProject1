@@ -1,21 +1,29 @@
 def calculate_consultation_fee(doctor_type):
+    specialist_rate = 150
+    general_rate = 100
+    default_rate = 75
+
     if doctor_type == "specialist":
-        return 150
+        return specialist_rate
     elif doctor_type == "general":
-        return 100
+        return general_rate
     else:
-        return 75
+        return default_rate
 
 def calculate_insurance_discount(fee, insurance):
+    premium_rate = 0.3
+    standard_rate = 0.15
+    
     if insurance == "premium":
-        return fee * 0.30
+        return fee * premium_rate
     elif insurance == "standard":
-        return fee * 0.15
+        return fee * standard_rate
     else:
         return 0
 
 def calculate_tax(amount):
-    return amount * 0.06
+    tax_rate = 0.6
+    return amount * tax_rate
 
 def calculate_facility_fee(amount):
     if amount >= 100:
