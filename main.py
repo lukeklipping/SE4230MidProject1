@@ -1,12 +1,3 @@
-def get_patient_name(appointment):
-    return appointment["patient"]["name"]
-
-def get_patient_phone(appointment):
-    return appointment["patient"]["phone"]
-
-def get_patient_insurance(appointment):
-    return appointment["patient"]["insurance"]
-
 def calculate_consultation_fee(doctor_type):
     if doctor_type == "specialist":
         return 150
@@ -57,9 +48,9 @@ def process_billing(doctor_type, patient_insurance):
     return consultation_fee, insurance_discount, amount_after_discount, tax, facility_fee, final_bill
 
 def extract_patient(appointment):
-    patient_name = get_patient_name(appointment)
-    patient_phone = get_patient_phone(appointment)
-    patient_insurance = get_patient_insurance(appointment)
+    patient_name = appointment["patient"]["name"]
+    patient_phone = appointment["patient"]["phone"]
+    patient_insurance = appointment["patient"]["insurance"]
     doctor_type = appointment["doctor_type"]
     return patient_name, patient_phone, patient_insurance, doctor_type
 
