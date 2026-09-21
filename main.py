@@ -47,21 +47,34 @@ def print_bill(consultation_fee, insurance_discount, tax, facility_fee, final_bi
     print("Facility Fee: $", facility_fee)
     print("Final Bill: $", final_bill)
 
-def process_appointment(appointment):
-    patient_name = get_patient_name(appointment)
-    patient_phone = get_patient_phone(appointment)
-    patient_insurance = get_patient_insurance(appointment)
-    doctor_type = appointment["doctor_type"]
-    
+def process_billing(appointment):
     consultation_fee = calculate_consultation_fee(doctor_type)
     insurance_discount = calculate_insurance_discount(consultation_fee, patient_insurance)
     amount_after_discount = consultation_fee - insurance_discount
     tax = calculate_tax(amount_after_discount)
     facility_fee = calculate_facility_fee(amount_after_discount)
     final_bill = calculate_final_bill(consultation_fee, insurance_discount, tax, facility_fee)
-    
+    return consultation_fee, insurance_discount, amount_after_discount, tax, facility_fee, final_bill
+
+def extract_patient(appointment):
+    patient_name = get_patient_name(appointment)
+    patient_phone = get_patient_phone(appointment)
+    patient_insurance = get_patient_insurance(appointment)
+    doctor_type = appointment["doctor_type"]
+    return patient_name, patient_phone, patient_insurance, doctor_type
+
+def display_appointment(patient_name, patient_phone, patient_insurance, consultation_fee, insurance_discount, tax, facility_fee, final_bill):
     print_patient_info(patient_name, patient_phone, patient_insurance)
     print_bill(consultation_fee, insurance_discount, tax, facility_fee, final_bill)
+
+
+def process_appointment(appointment):
+    
+    patient_name, patient_phone, patient_insurance, doctor_type = extract_patient(appointment)
+
+    consultation_fee, insurance_discount, amount_after_discount, tax, facility_fee, final_bill = process_billing(appointment)
+
+    display_appointment(patient_name, patient_phone, patient_insurance, consultation_fee, insurance_discount, tax, facility_fee, final_bill)
 
 appointment = {
     "patient": {
