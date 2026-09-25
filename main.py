@@ -61,7 +61,7 @@ def process_billing(doctor_type, patient_insurance):
         calculate_final_bill(consultation_fee, insurance_discount, tax, facility_fee) 
     )
 
-def extract_patient(appointment):
+def extract_appointment_details(appointment):
     return (
         appointment["patient"]["name"], 
         appointment["patient"]["phone"], 
@@ -76,7 +76,7 @@ def display_appointment(patient_name, patient_phone, patient_insurance, consulta
 
 def process_appointment(appointment):
     
-    patient_name, patient_phone, patient_insurance, doctor_type = extract_patient(appointment)
+    patient_name, patient_phone, patient_insurance, doctor_type = extract_appointment_details(appointment)
 
     consultation_fee, insurance_discount, tax, facility_fee, final_bill = process_billing(doctor_type, patient_insurance)
 
