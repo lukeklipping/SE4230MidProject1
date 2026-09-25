@@ -22,7 +22,7 @@ def calculate_insurance_discount(fee, insurance):
         return 0
 
 def calculate_tax(amount):
-    tax_rate = 0.6
+    tax_rate = 0.06
     return amount * tax_rate
 
 def calculate_facility_fee(amount):
@@ -52,15 +52,22 @@ def process_billing(doctor_type, patient_insurance):
     amount_after_discount = consultation_fee - insurance_discount
     tax = calculate_tax(amount_after_discount)
     facility_fee = calculate_facility_fee(amount_after_discount)
-    final_bill = calculate_final_bill(consultation_fee, insurance_discount, tax, facility_fee)
-    return consultation_fee, insurance_discount, amount_after_discount, tax, facility_fee, final_bill
+
+    return (
+        consultation_fee, 
+        insurance_discount, 
+        tax, 
+        facility_fee, 
+        calculate_final_bill(consultation_fee, insurance_discount, tax, facility_fee) 
+    )
 
 def extract_patient(appointment):
-    patient_name = appointment["patient"]["name"]
-    patient_phone = appointment["patient"]["phone"]
-    patient_insurance = appointment["patient"]["insurance"]
-    doctor_type = appointment["doctor_type"]
-    return patient_name, patient_phone, patient_insurance, doctor_type
+    return (
+        appointment["patient"]["name"], 
+        appointment["patient"]["phone"], 
+        appointment["patient"]["insurance"], 
+        appointment["doctor_type"]
+        )
 
 def display_appointment(patient_name, patient_phone, patient_insurance, consultation_fee, insurance_discount, tax, facility_fee, final_bill):
     print_patient_info(patient_name, patient_phone, patient_insurance)
@@ -71,7 +78,7 @@ def process_appointment(appointment):
     
     patient_name, patient_phone, patient_insurance, doctor_type = extract_patient(appointment)
 
-    consultation_fee, insurance_discount, amount_after_discount, tax, facility_fee, final_bill = process_billing(doctor_type, patient_insurance)
+    consultation_fee, insurance_discount, tax, facility_fee, final_bill = process_billing(doctor_type, patient_insurance)
 
     display_appointment(patient_name, patient_phone, patient_insurance, consultation_fee, insurance_discount, tax, facility_fee, final_bill)
 
