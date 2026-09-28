@@ -6,41 +6,54 @@ class PatientInfo:
     phone: str
     insurance: str
 
-def calculate_consultation_fee(doctor_type):
-    specialist_rate = 150
-    general_rate = 100
-    default_rate = 75
+class BillingCalculator:
+    def __init__(self, doctor_type, insurance):
+        self.doctor_type = doctor_type
+        self.insurance = insurance
 
-    if doctor_type == "specialist":
-        return specialist_rate
-    elif doctor_type == "general":
-        return general_rate
-    else:
-        return default_rate
+        self.consultation_fee = self._calculate_consultation_fee()
+        self.insurance_discount = self._calculate_insurance_discount()
+        self.amount_after_discount = self.consultation_fee - self.insurance_discount
+        self.tax = self._calculate_tax()
+        self.facility_fee = self._calculate_facility_fee()
+        self.final_bill = self._calculate_final_bill()
 
-def calculate_insurance_discount(fee, insurance):
-    premium_rate = 0.3
-    standard_rate = 0.15
-    
-    if insurance == "premium":
-        return fee * premium_rate
-    elif insurance == "standard":
-        return fee * standard_rate
-    else:
-        return 0
+    def _calculate_consultation_fee(self):
+        specialist_rate = 150
+        general_rate = 100
+        default_rate = 75
 
-def calculate_tax(amount):
-    tax_rate = 0.06
-    return amount * tax_rate
+        if self.doctor_type == "specialist":
+            return specialist_rate
+        elif self.doctor_type == "general":
+            return general_rate
+        else:
+            return default_rate
 
-def calculate_facility_fee(amount):
-    if amount >= 100:
-        return 20
-    else:
-        return 10
+    def _calculate_insurance_discount(self):
+        premium_rate = 0.3
+        standard_rate = 0.15
 
-def calculate_final_bill(consultation_fee, insurance_discount, tax, facility_fee):
-    return consultation_fee - insurance_discount + tax + facility_fee
+        if self.insurance == "premium":
+            return self.consultation_fee * premium_rate
+        elif self.insurance == "standard":
+            return self.consultation_fee * standard_rate
+        else:
+            return 0
+
+    def _calculate_tax(self):
+        tax_rate = 0.06
+        return self.amount_after_discount * tax_rate
+
+    def _calculate_facility_fee(self):
+        if self.amount_after_discount >= 100:
+            return 20
+        else:
+            return 10
+
+    def _calculate_final_bill(self):
+        return self.consultation_fee - self.insurance_discount + self.tax + self.facility_fee
+
 
 def print_patient_info(patient):
     print("Patient:", patient.name)
@@ -54,19 +67,15 @@ def print_bill(consultation_fee, insurance_discount, tax, facility_fee, final_bi
     print("Facility Fee: $", facility_fee)
     print("Final Bill: $", final_bill)
 
-def process_billing(doctor_type, patient_insurance):
-    consultation_fee = calculate_consultation_fee(doctor_type)
-    insurance_discount = calculate_insurance_discount(consultation_fee, patient_insurance)
-    amount_after_discount = consultation_fee - insurance_discount
-    tax = calculate_tax(amount_after_discount)
-    facility_fee = calculate_facility_fee(amount_after_discount)
+def process_billing(doctor_type, patient):
+    billing = BillingCalculator(doctor_type, patient.insurance)
 
     return (
-        consultation_fee, 
-        insurance_discount, 
-        tax, 
-        facility_fee, 
-        calculate_final_bill(consultation_fee, insurance_discount, tax, facility_fee) 
+        billing.consultation_fee,
+        billing.insurance_discount,
+        billing.tax,
+        billing.facility_fee,
+        billing.final_bill
     )
 
 def extract_appointment_details(appointment):
@@ -85,8 +94,8 @@ def display_appointment(patient, consultation_fee, insurance_discount, tax, faci
 def process_appointment(appointment):
     patient, doctor_type = extract_appointment_details(appointment)
 
-    consultation_fee, insurance_discount, tax, facility_fee, final_bill = process_billing(doctor_type, patient.insurance)
-
+    consultation_fee, insurance_discount, tax, facility_fee, final_bill = process_billing(doctor_type, patient)
+    
     display_appointment(patient, consultation_fee, insurance_discount, tax, facility_fee, final_bill)
 
 appointment = {
