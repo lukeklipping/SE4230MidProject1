@@ -1,3 +1,11 @@
+from dataclasses import dataclass
+
+@dataclass(frozen=True)
+class PatientInfo:
+    name: str
+    phone: str
+    insurance: str
+
 def calculate_consultation_fee(doctor_type):
     specialist_rate = 150
     general_rate = 100
@@ -34,10 +42,10 @@ def calculate_facility_fee(amount):
 def calculate_final_bill(consultation_fee, insurance_discount, tax, facility_fee):
     return consultation_fee - insurance_discount + tax + facility_fee
 
-def print_patient_info(name, phone, insurance):
-    print("Patient:", name)
-    print("Phone:", phone)
-    print("Insurance:", insurance)
+def print_patient_info(patient):
+    print("Patient:", patient.name)
+    print("Phone:", patient.phone)
+    print("Insurance:", patient.insurance)
 
 def print_bill(consultation_fee, insurance_discount, tax, facility_fee, final_bill):
     print("Consultation Fee: $", consultation_fee)
@@ -62,25 +70,24 @@ def process_billing(doctor_type, patient_insurance):
     )
 
 def extract_appointment_details(appointment):
-    return (
-        appointment["patient"]["name"], 
-        appointment["patient"]["phone"], 
-        appointment["patient"]["insurance"], 
-        appointment["doctor_type"]
-        )
+    patient = PatientInfo(
+        name=appointment["patient"]["name"],
+        phone=appointment["patient"]["phone"],
+        insurance=appointment["patient"]["insurance"],
+    )
+    return patient, appointment["doctor_type"]
 
-def display_appointment(patient_name, patient_phone, patient_insurance, consultation_fee, insurance_discount, tax, facility_fee, final_bill):
-    print_patient_info(patient_name, patient_phone, patient_insurance)
+def display_appointment(patient, consultation_fee, insurance_discount, tax, facility_fee, final_bill):
+    print_patient_info(patient)
     print_bill(consultation_fee, insurance_discount, tax, facility_fee, final_bill)
 
 
 def process_appointment(appointment):
-    
-    patient_name, patient_phone, patient_insurance, doctor_type = extract_appointment_details(appointment)
+    patient, doctor_type = extract_appointment_details(appointment)
 
-    consultation_fee, insurance_discount, tax, facility_fee, final_bill = process_billing(doctor_type, patient_insurance)
+    consultation_fee, insurance_discount, tax, facility_fee, final_bill = process_billing(doctor_type, patient.insurance)
 
-    display_appointment(patient_name, patient_phone, patient_insurance, consultation_fee, insurance_discount, tax, facility_fee, final_bill)
+    display_appointment(patient, consultation_fee, insurance_discount, tax, facility_fee, final_bill)
 
 appointment = {
     "patient": {
