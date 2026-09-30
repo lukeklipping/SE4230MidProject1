@@ -68,12 +68,12 @@ def print_patient_info(patient):
     print("Phone:", patient.phone)
     print("Insurance:", patient.insurance)
 
-def print_bill(consultation_fee, insurance_discount, tax, facility_fee, final_bill):
-    print("Consultation Fee: $", consultation_fee)
-    print("Insurance Discount: $", insurance_discount)
-    print("Tax: $", tax)
-    print("Facility Fee: $", facility_fee)
-    print("Final Bill: $", final_bill)
+def print_bill(record):
+    print("Consultation Fee: $", record.consultation_fee)
+    print("Insurance Discount: $", record.insurance_discount)
+    print("Tax: $", record.tax)
+    print("Facility Fee: $", record.facility_fee)
+    print("Final Bill: $", record.final_bill)
 
 def extract_appointment_details(appointment):
     patient = PatientInfo(
@@ -98,7 +98,7 @@ def create_billing_record(appointment):
 
 def display_appointment(record):
     print_patient_info(record.patient)
-    print_bill(record.consultation_fee, record.insurance_discount, record.tax, record.facility_fee, record.final_bill)
+    print_bill(record)
 
 def process_appointment(appointment):
     billing_record = create_billing_record(appointment)
