@@ -6,6 +6,15 @@ class PatientInfo:
     phone: str
     insurance: str
 
+@dataclass(frozen=True)
+class BillingRecord:
+    patient: PatientInfo
+    consultation_fee: float
+    insurance_discount: float
+    tax: float
+    facility_fee: float
+    final_bill: float
+
 class BillingCalculator:
     def __init__(self, doctor_type, insurance):
         self.doctor_type = doctor_type
@@ -54,7 +63,6 @@ class BillingCalculator:
     def _calculate_final_bill(self):
         return self.consultation_fee - self.insurance_discount + self.tax + self.facility_fee
 
-
 def print_patient_info(patient):
     print("Patient:", patient.name)
     print("Phone:", patient.phone)
@@ -67,17 +75,6 @@ def print_bill(consultation_fee, insurance_discount, tax, facility_fee, final_bi
     print("Facility Fee: $", facility_fee)
     print("Final Bill: $", final_bill)
 
-def process_billing(doctor_type, patient):
-    billing = BillingCalculator(doctor_type, patient.insurance)
-
-    return (
-        billing.consultation_fee,
-        billing.insurance_discount,
-        billing.tax,
-        billing.facility_fee,
-        billing.final_bill
-    )
-
 def extract_appointment_details(appointment):
     patient = PatientInfo(
         name=appointment["patient"]["name"],
@@ -86,17 +83,26 @@ def extract_appointment_details(appointment):
     )
     return patient, appointment["doctor_type"]
 
-def display_appointment(patient, consultation_fee, insurance_discount, tax, facility_fee, final_bill):
-    print_patient_info(patient)
-    print_bill(consultation_fee, insurance_discount, tax, facility_fee, final_bill)
+def create_billing_record(appointment):
+    patient, doctor_type = extract_appointment_details(appointment)
+    billing = BillingCalculator(doctor_type, patient.insurance)
 
+    return BillingRecord(
+        patient=patient,
+        consultation_fee=billing.consultation_fee,
+        insurance_discount=billing.insurance_discount,
+        tax=billing.tax,
+        facility_fee=billing.facility_fee,
+        final_bill=billing.final_bill
+    )
+
+def display_appointment(record):
+    print_patient_info(record.patient)
+    print_bill(record.consultation_fee, record.insurance_discount, record.tax, record.facility_fee, record.final_bill)
 
 def process_appointment(appointment):
-    patient, doctor_type = extract_appointment_details(appointment)
-
-    consultation_fee, insurance_discount, tax, facility_fee, final_bill = process_billing(doctor_type, patient)
-    
-    display_appointment(patient, consultation_fee, insurance_discount, tax, facility_fee, final_bill)
+    billing_record = create_billing_record(appointment)
+    display_appointment(billing_record)
 
 appointment = {
     "patient": {
