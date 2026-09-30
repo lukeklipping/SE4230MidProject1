@@ -1,19 +1,22 @@
 from dataclasses import dataclass
 
+# ===== Appointment Data =====
+
 @dataclass(frozen=True)
 class PatientInfo:
     name: str
     phone: str
     insurance: str
 
-@dataclass(frozen=True)
-class BillingRecord:
-    patient: PatientInfo
-    consultation_fee: float
-    insurance_discount: float
-    tax: float
-    facility_fee: float
-    final_bill: float
+def extract_appointment_details(appointment):
+    patient = PatientInfo(
+        name=appointment["patient"]["name"],
+        phone=appointment["patient"]["phone"],
+        insurance=appointment["patient"]["insurance"],
+    )
+    return patient, appointment["doctor_type"]
+
+# ===== Billing Processing =====
 
 class BillingCalculator:
     def __init__(self, doctor_type, insurance):
@@ -63,25 +66,16 @@ class BillingCalculator:
     def _calculate_final_bill(self):
         return self.consultation_fee - self.insurance_discount + self.tax + self.facility_fee
 
-def print_patient_info(patient):
-    print("Patient:", patient.name)
-    print("Phone:", patient.phone)
-    print("Insurance:", patient.insurance)
+# ===== Transformation =====
 
-def print_bill(consultation_fee, insurance_discount, tax, facility_fee, final_bill):
-    print("Consultation Fee: $", consultation_fee)
-    print("Insurance Discount: $", insurance_discount)
-    print("Tax: $", tax)
-    print("Facility Fee: $", facility_fee)
-    print("Final Bill: $", final_bill)
-
-def extract_appointment_details(appointment):
-    patient = PatientInfo(
-        name=appointment["patient"]["name"],
-        phone=appointment["patient"]["phone"],
-        insurance=appointment["patient"]["insurance"],
-    )
-    return patient, appointment["doctor_type"]
+@dataclass(frozen=True)
+class BillingRecord:
+    patient: PatientInfo
+    consultation_fee: float
+    insurance_discount: float
+    tax: float
+    facility_fee: float
+    final_bill: float
 
 def create_billing_record(appointment):
     patient, doctor_type = extract_appointment_details(appointment)
@@ -96,9 +90,25 @@ def create_billing_record(appointment):
         final_bill=billing.final_bill
     )
 
+# ===== Presentation =====
+
+def print_patient_info(patient):
+    print("Patient:", patient.name)
+    print("Phone:", patient.phone)
+    print("Insurance:", patient.insurance)
+
+def print_bill(record):
+    print("Consultation Fee: $", record.consultation_fee)
+    print("Insurance Discount: $", record.insurance_discount)
+    print("Tax: $", record.tax)
+    print("Facility Fee: $", record.facility_fee)
+    print("Final Bill: $", record.final_bill)
+
 def display_appointment(record):
     print_patient_info(record.patient)
-    print_bill(record.consultation_fee, record.insurance_discount, record.tax, record.facility_fee, record.final_bill)
+    print_bill(record)
+
+# ===== Appointment Data → Billing Processing → Transformation → Presentation =====
 
 def process_appointment(appointment):
     billing_record = create_billing_record(appointment)
